@@ -1,57 +1,69 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 const Timer = () => {
 
   const [second, setSecond] = useState(0);
   const [minutes, setMinutes] = useState(0);
   const [hour, setHour] = useState(0)
-  const [toggle, setToggle] = useState(false)
-
-  // {setTimeout(()=>{setSecond(second+1)},1000)};
-
+  const [toggle, setToggle] = useState(false);
+  const intial = useRef(null);
 
 
   const start = () => {
-    setToggle(!toggle)
+    setToggle(true);
+  }
+  const stop = () =>{
+    setToggle(false);
+    clearInterval(intial.current);
+  }
+  const restart = () =>{
+    setSecond(0);
+    setMinutes(0);
+    setHour(0);
+    setToggle(true);
+    clearInterval(intial.current);
   }
 
 
   useEffect(() => {
-
-    if(toggle)
-    setInterval(() => {
-      setSecond(second => second + 1)
-    }, 1000);
-
-    setInterval(() => {
-      setMinutes(minutes => minutes + 1)
-    }, 60000);
-
-    setInterval(() => {
-      setHour(hour => hour + 1)
-    }, 360000);
+    if(toggle){
+      setTimeout(() => {
+        if(second === 10){
+          setMinutes(minutes => minutes + 1);
+          setSecond(1);
+          if(minutes === 10){
+            setHour(hour => hour + 1);
+            setMinutes(1);
+          }
+        }else{
+          setSecond(second => second + 1)
+        }
+      }, 1000);
+    }
 
   },[second,minutes,toggle])
 
 
 
-
-
-
-
-
-
-
-
-
   return (
     <div className='timer-container'>
-      <h1>Countdown Timer<button className='btn btn-danger mx-3' onClick={start}>{toggle ? 'Start' : 'Stop'}</button></h1>
-      <span className='timer'>Second : {second}</span>
-      <span className='timer'>Minutes : {minutes}</span>
-      <span className='timer'>Hour is : {hour}</span>
-
-
+      <div className='row'>
+        <div className='col-6 text-right'>
+        Countdown Timer
+        </div>
+        <div className='col-6 text-left'>
+          <button className='btn btn-success mx-3' onClick={start}>Start</button>
+          <button className='btn btn-success mx-3' onClick={stop}>Stop</button>
+          <button className='btn btn-success mx-3' onClick={restart}>Restart</button>
+        </div>
+        <div className='col-12'>
+          <span className='timer'>Hour is : {hour}</span>
+          <span className='timer'>Minutes : {minutes}</span>
+          <span className='timer'>Second : {second}</span>
+        </div>
+      </div>
+      
+      
     </div>
   )
 }
